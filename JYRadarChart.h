@@ -32,5 +32,6 @@
 - (void)enableVerticleLine:(BOOL)enable;
 - (void)setAtrributeFont:(UIFont *) font;
 - (void)setStepTextFont:(UIFont *) font;
+- (void)setValueLineWidth:(CGFloat)width;
 
 @end

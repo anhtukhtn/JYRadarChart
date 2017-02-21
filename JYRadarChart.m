@@ -20,6 +20,7 @@
     UIFont * _attributeFont;
     UIFont * _valuesFont;
     UIFont * _stepTextFont;
+    CGFloat _lineWidth;
 }
 
 @property (nonatomic, assign) NSUInteger numOfV;
@@ -129,6 +130,10 @@
 
 - (void)setStepTextFont:(UIFont *) font {
     _stepTextFont = font;
+}
+
+- (void)setValueLineWidth:(CGFloat)width {
+    _lineWidth = width;
 }
 
 - (void)layoutSubviews {
@@ -249,6 +254,11 @@
     
 	//draw lines
     if (_numOfV > 0) {
+        
+        if (_lineWidth != 0) {
+            CGContextSetLineWidth(context, _lineWidth*1.0);
+        }
+        
         for (int serie = 0; serie < [_dataSeries count]; serie++) {
             if (self.fillArea) {
                 [colors[serie] setFill];
