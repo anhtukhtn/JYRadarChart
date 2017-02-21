@@ -171,7 +171,7 @@
 		NSInteger width = attributeTextSize.width;
         
 		CGFloat xOffset = pointOnEdge.x >= _centerPoint.x ? width / 2.0 + padding : -width / 2.0 - padding;
-		CGFloat yOffset = pointOnEdge.y >= _centerPoint.y ? height / 2.0 + padding : -height / 2.0 - padding;
+		CGFloat yOffset = pointOnEdge.y >= _centerPoint.y ? height / 1 + padding : -height / 1 - padding;
 		CGPoint legendCenter = CGPointMake(pointOnEdge.x + xOffset, pointOnEdge.y + yOffset);
 
         CGFloat xDraw = legendCenter.x - width / 2.0;
