@@ -15,7 +15,12 @@
 #define COLOR_HUE_STEP 5
 #define MAX_NUM_OF_COLOR 17
 
-@interface JYRadarChart ()
+@interface JYRadarChart () {
+    BOOL _drawVerticelLine;
+    UIFont * _attributeFont;
+    UIFont * _valuesFont;
+    UIFont * _stepTextFont;
+}
 
 @property (nonatomic, assign) NSUInteger numOfV;
 @property (nonatomic, strong) JYLegendView *legendView;
@@ -114,6 +119,18 @@
 	}
 }
 
+- (void)enableVerticleLine:(BOOL)enable {
+    _drawVerticelLine = enable;
+}
+
+- (void)setAtrributeFont:(UIFont *) font {
+    _attributeFont = font;
+}
+
+- (void)setStepTextFont:(UIFont *) font {
+    _stepTextFont = font;
+}
+
 - (void)layoutSubviews {
 	[self.legendView sizeToFit];
 	CGRect r = self.legendView.frame;
@@ -138,13 +155,19 @@
 	CGContextRef context = UIGraphicsGetCurrentContext();
     
 	//draw attribute text
-	CGFloat height = [self.scaleFont lineHeight];
+    
+    UIFont * attributeFont = _attributeFont;
+    if (attributeFont == nil) {
+        attributeFont = self.scaleFont;
+    }
+    
+	CGFloat height = [attributeFont lineHeight];
 	CGFloat padding = 2.0;
 	for (int i = 0; i < _numOfV; i++) {
 		NSString *attributeName = _attributes[i];
 		CGPoint pointOnEdge = CGPointMake(_centerPoint.x - _r * sin(i * radPerV), _centerPoint.y - _r * cos(i * radPerV));
         
-		CGSize attributeTextSize = JY_TEXT_SIZE(attributeName, self.scaleFont);
+		CGSize attributeTextSize = JY_TEXT_SIZE(attributeName, attributeFont);
 		NSInteger width = attributeTextSize.width;
         
 		CGFloat xOffset = pointOnEdge.x >= _centerPoint.x ? width / 2.0 + padding : -width / 2.0 - padding;
@@ -166,7 +189,7 @@
             [paragraphStyle setLineBreakMode:NSLineBreakByClipping];
             [paragraphStyle setAlignment:NSTextAlignmentCenter];
 
-            NSDictionary *attributes = @{ NSFontAttributeName: self.scaleFont,
+            NSDictionary *attributes = @{ NSFontAttributeName: attributeFont,
                                           NSParagraphStyleAttributeName: paragraphStyle };
 
             [attributeName drawInRect:rectText
@@ -174,7 +197,7 @@
         }
         else {
             [attributeName drawInRect:rectText
-                             withFont:self.scaleFont
+                             withFont:attributeFont
                         lineBreakMode:NSLineBreakByClipping
                             alignment:NSTextAlignmentCenter];
         }
@@ -190,37 +213,39 @@
     CGContextFillPath(context);
 
 	//draw steps line
-	//static CGFloat dashedPattern[] = {3,3};
-	//TODO: make this color a variable
-	[[UIColor lightGrayColor] setStroke];
-	CGContextSaveGState(context);
-	for (int step = 1; step <= _steps; step++) {
-		for (int i = 0; i <= _numOfV; ++i) {
-			if (i == 0) {
-				CGContextMoveToPoint(context, _centerPoint.x, _centerPoint.y - _r * step / _steps);
-			}
-			else {
-				//                CGContextSetLineDash(context, 0, dashedPattern, 2);
-				CGContextAddLineToPoint(context, _centerPoint.x - _r * sin(i * radPerV) * step / _steps,
-				                        _centerPoint.y - _r * cos(i * radPerV) * step / _steps);
-			}
-		}
-		CGContextStrokePath(context);
-	}
-	CGContextRestoreGState(context);
+    //static CGFloat dashedPattern[] = {3,3};
+    //TODO: make this color a variable
+    [[UIColor lightGrayColor] setStroke];
+    CGContextSaveGState(context);
+    for (int step = 1; step <= _steps; step++) {
+        for (int i = 0; i <= _numOfV; ++i) {
+            if (i == 0) {
+                CGContextMoveToPoint(context, _centerPoint.x, _centerPoint.y - _r * step / _steps);
+            }
+            else {
+                //                CGContextSetLineDash(context, 0, dashedPattern, 2);
+                CGContextAddLineToPoint(context, _centerPoint.x - _r * sin(i * radPerV) * step / _steps,
+                                        _centerPoint.y - _r * cos(i * radPerV) * step / _steps);
+            }
+        }
+        CGContextStrokePath(context);
+    }
+    CGContextRestoreGState(context);
     
-	//draw lines from center
-	[_backgroundLineColorRadial setStroke];
-	for (int i = 0; i < _numOfV; i++) {
-		CGContextMoveToPoint(context, _centerPoint.x, _centerPoint.y);
-		CGContextAddLineToPoint(context, _centerPoint.x - _r * sin(i * radPerV),
-		                        _centerPoint.y - _r * cos(i * radPerV));
-		CGContextStrokePath(context);
-	}
-	//end of base except axis label
-    
-    
-	CGContextSetLineWidth(context, 2.0);
+    //draw lines from center
+    if (_drawVerticelLine) {
+        [_backgroundLineColorRadial setStroke];
+        for (int i = 0; i < _numOfV; i++) {
+            CGContextMoveToPoint(context, _centerPoint.x, _centerPoint.y);
+            CGContextAddLineToPoint(context, _centerPoint.x - _r * sin(i * radPerV),
+                                    _centerPoint.y - _r * cos(i * radPerV));
+            CGContextStrokePath(context);
+        }
+        //end of base except axis label
+        
+        
+        CGContextSetLineWidth(context, 2.0);
+    }
     
 	//draw lines
     if (_numOfV > 0) {
@@ -271,16 +296,22 @@
 	if (self.showStepText) {
 		//draw step label text, alone y axis
 		//TODO: make this color a variable
+        
+        UIFont * stepTextFont = _stepTextFont;
+        if (stepTextFont == nil) {
+            stepTextFont = self.scaleFont;
+        }
+        
 		[[UIColor blackColor] setFill];
 		for (int step = 0; step <= _steps; step++) {
 			CGFloat value = _minValue + (_maxValue - _minValue) * step / _steps;
-			NSString *currentLabel = [NSString stringWithFormat:@"%.0f", value];
+			NSString *currentLabel = [NSString stringWithFormat:@"%f", value];
 			JY_DRAW_TEXT_IN_RECT(currentLabel,
 			                     CGRectMake(_centerPoint.x + 3,
 			                                _centerPoint.y - _r * step / _steps - 3,
 			                                20,
 			                                10),
-			                     self.scaleFont);
+			                     stepTextFont);
 		}
 	}
 }

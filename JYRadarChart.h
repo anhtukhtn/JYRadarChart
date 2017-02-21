@@ -29,5 +29,8 @@
 
 - (void)setTitles:(NSArray *)titles;
 - (void)setColors:(NSArray *)colors;
+- (void)enableVerticleLine:(BOOL)enable;
+- (void)setAtrributeFont:(UIFont *) font;
+- (void)setStepTextFont:(UIFont *) font;
 
 @end

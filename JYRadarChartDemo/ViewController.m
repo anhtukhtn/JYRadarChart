@@ -79,7 +79,7 @@
 	radarChart.backgroundColor = [UIColor whiteColor];
 	radarChart.r = 200;
 	radarChart.minValue = 0;
-	radarChart.maxValue = 1;
+	radarChart.maxValue = 1.0;
 	radarChart.fillArea = YES;
 	radarChart.colorOpacity = 0.7;
     radarChart.backgroundFillColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1];
@@ -87,6 +87,9 @@
 	radarChart.showLegend = false;
 	[radarChart setTitles:@[@"demo"]];
 	[radarChart setColors:@[[UIColor yellowColor]]];
+    [radarChart enableVerticleLine:false];
+    [radarChart setAtrributeFont:[UIFont systemFontOfSize:15]];
+    [radarChart setStepTextFont:[UIFont systemFontOfSize:9]];
 	[self.view addSubview:radarChart];
     
     
