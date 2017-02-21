@@ -42,7 +42,7 @@
 	[self.view addSubview:p];
 
 
-	[NSTimer scheduledTimerWithTimeInterval:1.5 target:self selector:@selector(updateData) userInfo:nil repeats:YES];
+//	[NSTimer scheduledTimerWithTimeInterval:1.5 target:self selector:@selector(updateData) userInfo:nil repeats:YES];
 
 
 
@@ -68,6 +68,28 @@
 	p2.steps = 2;
 	p2.backgroundColor = [UIColor grayColor];
 	[self.view addSubview:p2];
+    
+    /// anhtu
+	JYRadarChart * radarChart = [[JYRadarChart alloc] initWithFrame:CGRectMake(30, 500, 600, 600)];
+
+	NSArray * data = @[@(0.1), @(0.5), @(0.3), @(0.6), @(0.7)];
+	radarChart.dataSeries = @[data];
+	radarChart.steps = 4;
+	radarChart.showStepText = YES;
+	radarChart.backgroundColor = [UIColor whiteColor];
+	radarChart.r = 200;
+	radarChart.minValue = 0;
+	radarChart.maxValue = 1;
+	radarChart.fillArea = YES;
+	radarChart.colorOpacity = 0.7;
+    radarChart.backgroundFillColor = [UIColor colorWithRed:0.9 green:0.9 blue:0.9 alpha:1];
+	radarChart.attributes = @[@"Attack for testing", @"Defense defense", @"Speed speed speed", @"HP testing testing", @"MPtesting chart"];
+	radarChart.showLegend = false;
+	[radarChart setTitles:@[@"demo"]];
+	[radarChart setColors:@[[UIColor yellowColor]]];
+	[self.view addSubview:radarChart];
+    
+    
 }
 
 - (void)updateData {
