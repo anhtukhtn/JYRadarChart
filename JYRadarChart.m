@@ -151,6 +151,16 @@
 		CGFloat yOffset = pointOnEdge.y >= _centerPoint.y ? height / 2.0 + padding : -height / 2.0 - padding;
 		CGPoint legendCenter = CGPointMake(pointOnEdge.x + xOffset, pointOnEdge.y + yOffset);
 
+        CGFloat xDraw = legendCenter.x - width / 2.0;
+        if (i == 0) {
+            xDraw = legendCenter.x - width;
+        }
+        
+        CGRect rectText = CGRectMake(xDraw,
+                                     legendCenter.y - height / 2.0,
+                                     width,
+                                     height);
+        
         if (__IPHONE_OS_VERSION_MIN_REQUIRED >= 70000) {
             NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
             [paragraphStyle setLineBreakMode:NSLineBreakByClipping];
@@ -159,17 +169,11 @@
             NSDictionary *attributes = @{ NSFontAttributeName: self.scaleFont,
                                           NSParagraphStyleAttributeName: paragraphStyle };
 
-            [attributeName drawInRect:CGRectMake(legendCenter.x - width / 2.0,
-                                                 legendCenter.y - height / 2.0,
-                                                 width,
-                                                 height)
+            [attributeName drawInRect:rectText
                        withAttributes:attributes];
         }
         else {
-            [attributeName drawInRect:CGRectMake(legendCenter.x - width / 2.0,
-                                                 legendCenter.y - height / 2.0,
-                                                 width,
-                                                 height)
+            [attributeName drawInRect:rectText
                              withFont:self.scaleFont
                         lineBreakMode:NSLineBreakByClipping
                             alignment:NSTextAlignmentCenter];
